@@ -1,9 +1,9 @@
 package statisticsfirstmidterm;
 
+import static java.lang.Math.ceil;
 import static java.lang.Math.log10;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -18,6 +18,7 @@ public class StatisticsFirstMidterm {
         Scanner in = new Scanner(System.in);
         int length = 0;
 
+        System.out.println("Welcome to the statistics calculator! Please enter the length of the data set and hit ENTER:");
         while (!in.hasNextInt()) {
             System.out.println("That's not a valid integer! Try again:");
             in.next();
@@ -39,6 +40,7 @@ public class StatisticsFirstMidterm {
             sample.add(in.nextDouble());
         }
 
+        // Sort the list in ascending order
         Collections.sort(sample);
 
         System.out.println("Sorted list: ");
@@ -46,40 +48,55 @@ public class StatisticsFirstMidterm {
             System.out.print(n + " ");
         }
 
-        boolean watcher = true;
+        boolean switchFlag = true;
         do {
-            System.out.println("Please select the way that we are going to treat the data and hit ENTER...\n"
-                    + "1.- Group the data\n"
-                    + "2.- Leave it ungrouped");
+            System.out.println("""
+                               Please select the way that we are going to treat the data and hit ENTER...
+                               1.- Group the data
+                               2.- Leave it ungrouped""");
             String dec = in.next();
             switch (dec) {
                 case "1" -> {
-                    watcher = true;
+                    switchFlag = true;
 
                 }
 
                 case "2" -> {
-                    watcher = true;
+                    switchFlag = true;
 
                 }
 
                 default -> {
-                    watcher = false;
+                    switchFlag = false;
+                    clearConsole();
                 }
+
             }
-        } while (!watcher);
+        } while (!switchFlag);
 
     }
 
     public static double[] getWidth(int n, double first, double last) {
         double k = 1 + (3.322 * log10(n));
-        int width = (int) ((last - first) / n);
+        int width = (int) ((last - first) / ceil(k));
         double[] kAndWidth = {k, width};
         return kAndWidth;
     }
 
-    public static ArrayList<Double> getIntervalsAndClassMarks(ArrayList<Double> sample, int width, int k, double first, double last) {
+    public static ArrayList<Double> getIntervalsAndClassMarks(double width, int k, double first) {
+        ArrayList<Double> intervalsAndClassMarks = new ArrayList<>();
 
+        for (int i = 0; i < k; i++) {
+            double lowerBound = first + (i * width);
+            double upperBound = lowerBound + width;
+            double classMark = (lowerBound + upperBound) / 2.0;
+
+            intervalsAndClassMarks.add(lowerBound);
+            intervalsAndClassMarks.add(upperBound);
+            intervalsAndClassMarks.add(classMark);
+        }
+
+        return intervalsAndClassMarks;
     }
 
     public static double getUngroupedAvg(ArrayList<Integer> group) {
@@ -88,14 +105,14 @@ public class StatisticsFirstMidterm {
 
     }
 
-    /**
-     * Simulates clearing the console screen by printing many new lines. This is
-     * the recommended method for Java IDEs like NetBeans.
-     */
     public static void clearConsole() {
-        for (int i = 0; i < 50; i++) {
-            System.out.println();
+        //clear cmd screen without new lines
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (Exception e) {
+            System.out.println("Error clearing console: " + e.getMessage());
         }
+
     }
 
 }
