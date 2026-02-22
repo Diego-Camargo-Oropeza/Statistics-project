@@ -134,13 +134,16 @@ public class StatisticsFirstMidterm {
     }
 
     public static void assignFrequencies(ArrayList<Double> sample, ArrayList<Interval> intervals) {
+        // Count how many sample values fall into each interval.
         for (double value : sample) {
+            // For each value, find the first interval it belongs to and increment that interval's frequency.
             for (int i = 0; i < intervals.size(); i++) {
                 Interval interval = intervals.get(i);
+                // For the last interval, include the upper limit; for others, use a half-open interval.
                 boolean isLastInterval = i == intervals.size() - 1;
+                // Determine if the value falls within the current interval.
                 boolean insideInterval;
-
-                // Use [lower, upper) for all classes except the last one, which is [lower, upper].
+                
                 if (isLastInterval) {
                     insideInterval = value >= interval.getLowerLimit() && value <= interval.getUpperLimit();
                 } else {
