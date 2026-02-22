@@ -44,36 +44,35 @@ public class StatisticsFirstMidterm {
             sample.add(scanner.nextDouble());
         }
 
-        Collections.sort(sample);
+        Collections.sort(sample); ///ungrouped
         //Sample data set for testing grouped statistics:
-        ArrayList<Double> sample2 = new ArrayList<>();
-        sample2.add(1.0);
-        sample2.add(2.0);
-        sample2.add(3.0);
-        sample2.add(4.0);
-        sample2.add(5.0);
-        sample2.add(6.0);
-        sample2.add(7.0);
-        sample2.add(8.0);
-        sample2.add(9.0);
-        sample2.add(12.0);
-        sample2.add(13.0);
-        sample2.add(12.0);
-        sample2.add(12.0);
-        sample2.add(11.0);
-        sample2.add(20.0);
-        sample2.add(18.0);
-        sample2.add(13.0);
-        sample2.add(17.0);
-        sample2.add(7.0);
-        sample2.add(2.0);
-        sample2.add(1.0);
-        sample2.add(1.0);
-        Collections.sort(sample2);
+//        ArrayList<Double> sample2 = new ArrayList<>();
+//        sample2.add(1.0);
+//        sample2.add(2.0);
+//        sample2.add(3.0);
+//        sample2.add(4.0);
+//        sample2.add(5.0);
+//        sample2.add(6.0);
+//        sample2.add(7.0);
+//        sample2.add(8.0);
+//        sample2.add(9.0);
+//        sample2.add(12.0);
+//        sample2.add(13.0);
+//        sample2.add(12.0);
+//        sample2.add(12.0);
+//        sample2.add(11.0);
+//        sample2.add(20.0);
+//        sample2.add(18.0);
+//        sample2.add(13.0);
+//        sample2.add(17.0);
+//        sample2.add(7.0);
+//        sample2.add(2.0);
+//        sample2.add(1.0);
+//        sample2.add(1.0);
+//        Collections.sort(sample2);
 
-        boolean validOption;
-        do {
-            validOption = true;
+        boolean validOption = true;
+        while(validOption) {
             System.out.println();
             System.out.println("""
                                Select how to process the data:
@@ -82,10 +81,16 @@ public class StatisticsFirstMidterm {
             String option = scanner.next();
             switch (option) {
                 case "1" -> {
-                    runGroupedStatistics(sample2);
-                    System.out.println("Want to try again? (y/n)");
+                    runGroupedStatistics(sample);
+                    System.out.println("Want to repeat with ungrouped data? (y/n)");
                     String repeat = scanner.next();
                     if (repeat.equalsIgnoreCase("y")) {
+                        runUngroupedStatistics(sample);
+                    }else{
+                         validOption = false;
+                    }
+                    System.out.println("Want to go back to the menu? (y/n)");
+                    if (!scanner.next().equalsIgnoreCase("y")){
                         validOption = false;
                     }
                 }
@@ -94,6 +99,13 @@ public class StatisticsFirstMidterm {
                     System.out.println("Want to repeat with grouped data? (y/n)");
                     String repeat = scanner.next();
                     if (repeat.equalsIgnoreCase("y")) {
+                        runGroupedStatistics(sample);
+                    }
+                    else{
+                        validOption = false;
+                    }
+                    System.out.println("Want to go back to the menu? (y/n)");
+                    if (!scanner.next().equalsIgnoreCase("y")){
                         validOption = false;
                     }
                 }
@@ -101,8 +113,8 @@ public class StatisticsFirstMidterm {
                     validOption = false;
                     System.out.println("Invalid option. Please enter 1 or 2.");
                 }
-            }
-        } while (!validOption);
+            }         
+        };
 
     }
 
@@ -117,7 +129,7 @@ public class StatisticsFirstMidterm {
             // Avoid zero-width intervals when all values are equal.
             return 1.0;
         }
-        return range / classCount;
+        return  Math.ceil(range / classCount);
     }
 
     public static ArrayList<Interval> buildIntervals(double width, int classCount, double min) {
@@ -134,16 +146,13 @@ public class StatisticsFirstMidterm {
     }
 
     public static void assignFrequencies(ArrayList<Double> sample, ArrayList<Interval> intervals) {
-        // Count how many sample values fall into each interval.
         for (double value : sample) {
-            // For each value, find the first interval it belongs to and increment that interval's frequency.
             for (int i = 0; i < intervals.size(); i++) {
                 Interval interval = intervals.get(i);
-                // For the last interval, include the upper limit; for others, use a half-open interval.
                 boolean isLastInterval = i == intervals.size() - 1;
-                // Determine if the value falls within the current interval.
                 boolean insideInterval;
-                
+
+                // Use [lower, upper) for all classes except the last one, which is [lower, upper].
                 if (isLastInterval) {
                     insideInterval = value >= interval.getLowerLimit() && value <= interval.getUpperLimit();
                 } else {
@@ -155,6 +164,20 @@ public class StatisticsFirstMidterm {
                     break;
                 }
             }
+        }
+    }
+    
+    public static void otherFrequencies(ArrayList<Interval> intervals, int n){
+        int cumFr = 0;
+        double cumRelFr = 0.0;
+        for (Interval interval : intervals){
+            cumFr += interval.getFrequency();
+            interval.setCumFrequency(cumFr);
+            
+            interval.setRelFrequency(n);
+            
+            cumRelFr += interval.getRelFrequency();
+            interval.setCumRelFrequency(cumRelFr); 
         }
     }
 
@@ -181,6 +204,7 @@ public class StatisticsFirstMidterm {
 
         ArrayList<Interval> intervals = buildIntervals(width, classCount, min);
         assignFrequencies(sample, intervals);
+        otherFrequencies(intervals, n);
 
         printFrequencyTable(intervals);
 
@@ -351,14 +375,17 @@ public class StatisticsFirstMidterm {
     public static void printFrequencyTable(ArrayList<Interval> intervals) {
         System.out.println();
         System.out.println("Frequency table:");
-        System.out.printf("%-12s %-12s %-12s %-12s%n", "Lower", "Upper", "Class Mark", "Frequency");
+        System.out.printf("%-12s %-12s %-12s %-11s %-12s %-12s %-12s%n", "Lower", "Upper", "Class Mark", "Frequency", "Cumulative Fr", "Relative Fr", "Cumulative Rel Fr");
         for (Interval interval : intervals) {
             System.out.printf(
-                    "%-12.6f %-12.6f %-12.6f %-12d%n",
+                    "%-12.6f %-12.6f %-12.6f %-11d %-13d %-12.6f %-12.6f%n",
                     interval.getLowerLimit(),
                     interval.getUpperLimit(),
                     interval.getClassMark(),
-                    interval.getFrequency()
+                    interval.getFrequency(),
+                    interval.getCumFrequency(),
+                    interval.getRelFrequency(),
+                    interval.getCumRelFrequency()
             );
         }
 
