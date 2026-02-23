@@ -25,11 +25,11 @@ public class StatisticsFirstMidterm {
             System.out.println("Invalid integer. Try again:");
             scanner.next();
         }
+
         length = scanner.nextInt();
 
         if (length <= 0) {
             System.out.println("The data set length must be greater than zero.");
-            return;
         }
 
         System.out.println("Data set length: " + length);
@@ -44,35 +44,36 @@ public class StatisticsFirstMidterm {
             sample.add(scanner.nextDouble());
         }
 
-        Collections.sort(sample); ///ungrouped
-        //Sample data set for testing grouped statistics:
-//        ArrayList<Double> sample2 = new ArrayList<>();
-//        sample2.add(1.0);
-//        sample2.add(2.0);
-//        sample2.add(3.0);
-//        sample2.add(4.0);
-//        sample2.add(5.0);
-//        sample2.add(6.0);
-//        sample2.add(7.0);
-//        sample2.add(8.0);
-//        sample2.add(9.0);
-//        sample2.add(12.0);
-//        sample2.add(13.0);
-//        sample2.add(12.0);
-//        sample2.add(12.0);
-//        sample2.add(11.0);
-//        sample2.add(20.0);
-//        sample2.add(18.0);
-//        sample2.add(13.0);
-//        sample2.add(17.0);
-//        sample2.add(7.0);
-//        sample2.add(2.0);
-//        sample2.add(1.0);
-//        sample2.add(1.0);
-//        Collections.sort(sample2);
+        Collections.sort(sample);
+        //ungrouped
+        // Sample data set for testing grouped statistics:
+        ArrayList<Double> sample2 = new ArrayList<>();
+        sample2.add(1.0);
+        sample2.add(2.0);
+        sample2.add(3.0);
+        sample2.add(4.0);
+        sample2.add(5.0);
+        sample2.add(6.0);
+        sample2.add(7.0);
+        sample2.add(8.0);
+        sample2.add(9.0);
+        sample2.add(12.0);
+        sample2.add(13.0);
+        sample2.add(12.0);
+        sample2.add(12.0);
+        sample2.add(11.0);
+        sample2.add(20.0);
+        sample2.add(18.0);
+        sample2.add(13.0);
+        sample2.add(17.0);
+        sample2.add(7.0);
+        sample2.add(2.0);
+        sample2.add(1.0);
+        sample2.add(1.0);
+        Collections.sort(sample2);
 
         boolean validOption = true;
-        while(validOption) {
+        while (validOption) {
             System.out.println();
             System.out.println("""
                                Select how to process the data:
@@ -81,16 +82,16 @@ public class StatisticsFirstMidterm {
             String option = scanner.next();
             switch (option) {
                 case "1" -> {
-                    runGroupedStatistics(sample);
+                    runGroupedStatistics(sample2);
                     System.out.println("Want to repeat with ungrouped data? (y/n)");
                     String repeat = scanner.next();
                     if (repeat.equalsIgnoreCase("y")) {
                         runUngroupedStatistics(sample);
-                    }else{
-                         validOption = false;
+                    } else {
+                        validOption = false;
                     }
                     System.out.println("Want to go back to the menu? (y/n)");
-                    if (!scanner.next().equalsIgnoreCase("y")){
+                    if (!scanner.next().equalsIgnoreCase("y")) {
                         validOption = false;
                     }
                 }
@@ -100,20 +101,20 @@ public class StatisticsFirstMidterm {
                     String repeat = scanner.next();
                     if (repeat.equalsIgnoreCase("y")) {
                         runGroupedStatistics(sample);
-                    }
-                    else{
+                    } else {
                         validOption = false;
                     }
                     System.out.println("Want to go back to the menu? (y/n)");
-                    if (!scanner.next().equalsIgnoreCase("y")){
+                    if (!scanner.next().equalsIgnoreCase("y")) {
                         validOption = false;
                     }
                 }
                 default -> {
-                    validOption = false;
                     System.out.println("Invalid option. Please enter 1 or 2.");
+                    validOption = true;
+
                 }
-            }         
+            }
         };
 
     }
@@ -129,7 +130,7 @@ public class StatisticsFirstMidterm {
             // Avoid zero-width intervals when all values are equal.
             return 1.0;
         }
-        return  Math.ceil(range / classCount);
+        return Math.ceil(range / classCount);
     }
 
     public static ArrayList<Interval> buildIntervals(double width, int classCount, double min) {
@@ -166,18 +167,18 @@ public class StatisticsFirstMidterm {
             }
         }
     }
-    
-    public static void otherFrequencies(ArrayList<Interval> intervals, int n){
+
+    public static void otherFrequencies(ArrayList<Interval> intervals, int n) {
         int cumFr = 0;
         double cumRelFr = 0.0;
-        for (Interval interval : intervals){
+        for (Interval interval : intervals) {
             cumFr += interval.getFrequency();
             interval.setCumFrequency(cumFr);
-            
+
             interval.setRelFrequency(n);
-            
+
             cumRelFr += interval.getRelFrequency();
-            interval.setCumRelFrequency(cumRelFr); 
+            interval.setCumRelFrequency(cumRelFr);
         }
     }
 
@@ -189,10 +190,10 @@ public class StatisticsFirstMidterm {
 
         System.out.println();
         System.out.println("Ungrouped statistics:");
-        System.out.printf("Mean: %.6f%n", mean);
-        System.out.printf("Median: %.6f%n", median);
+        System.out.printf("Mean: %.3f%n", mean);
+        System.out.printf("Median: %.3f%n", median);
         System.out.println("Mode(s): " + modes);
-        System.out.printf("Standard deviation (population): %.6f%n", stdDev);
+        System.out.printf("Standard deviation (population): %.3f%n", stdDev);
     }
 
     public static void runGroupedStatistics(ArrayList<Double> sample) {
@@ -215,10 +216,10 @@ public class StatisticsFirstMidterm {
 
         System.out.println();
         System.out.println("Grouped statistics:");
-        System.out.printf("Mean: %.6f%n", mean);
-        System.out.printf("Median: %.6f%n", median);
-        System.out.printf("Mode: %.6f%n", mode);
-        System.out.printf("Standard deviation (population): %.6f%n", stdDev);
+        System.out.printf("Mean: %.3f%n", mean);
+        System.out.printf("Median: %.3f%n", median);
+        System.out.printf("Mode: %.3f%n", mode);
+        System.out.printf("Standard deviation (population): %.3f%n", stdDev);
     }
 
     public static double getUngroupedMean(ArrayList<Double> sample) {
@@ -243,8 +244,11 @@ public class StatisticsFirstMidterm {
         int maxFrequency = 0;
 
         for (double value : sample) {
+            // Count the frequency of each value in the sample.
             int newFrequency = frequencyMap.getOrDefault(value, 0) + 1;
+            // Update the frequency map and track the maximum frequency found.
             frequencyMap.put(value, newFrequency);
+            // Update maxFrequency if this value's frequency exceeds the current maximum.
             if (newFrequency > maxFrequency) {
                 maxFrequency = newFrequency;
             }
